@@ -1,0 +1,39 @@
+replicaCount: 3
+lottery:
+  service:
+    port: 80
+
+image:
+  repository: omarzarrade/project
+  tag: latest
+  pullPolicy: Always
+service:
+  type: ClusterIP
+  port: 80
+  externalPort: 8080
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  path: /
+  hosts:
+    - lottery.example.com
+  tls:
+    - secretName: lottery-tls
+      hosts:
+        - lottery.example.com
+database:
+  image:
+    repository: omarzarrade/my-database
+    tag: latest
+    pullPolicy: Always
+  name: lottery-db
+  username: admin
+  password: password
+  database: lottery
+persistence:
+  enabled: true
+  storageClassName: standard
+  accessMode: ReadWriteOnce
+  size: 1Gi
+  

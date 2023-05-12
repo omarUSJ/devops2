@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: myproject
+  name: myproject
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: myproject
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: myproject
+    spec:
+      containers:
+      - image: omarzarrade/project:myproject
+        name: myproject
+        ports: 
+         - containerPort: 3000
+        resources: {}
+status: {}

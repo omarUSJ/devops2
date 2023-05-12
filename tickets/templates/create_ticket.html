@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Ticket</title>
+</head>
+<body>
+    <h1>Create Ticket</h1>
+    <form method="post" action="{% url 'create_ticket' %}">
+        {% csrf_token %}
+        <label for="representative_name">Representative Name:</label>
+        <input type="text" name="representative_name" id="representative_name"><br><br>
+        <label for="representative_email">Representative Email:</label>
+        <input type="email" name="representative_email" id="representative_email"><br><br>
+        <label for="ticket_number">Ticket Number:</label>
+        <input type="text" name="ticket_number" id="ticket_number"><br><br>
+        <input type="submit" value="Purchase Ticket">
+    </form>
+</body>
+</html>

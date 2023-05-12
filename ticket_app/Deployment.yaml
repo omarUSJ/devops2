@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgdb
+  template:
+    metadata:
+      labels:
+        app: pgdb
+    spec:
+      containers:
+      - name: pgdb
+        image: postgres:13-alpine
+        env:
+        - name: POSTGRES_USER
+          value: postgres
+        - name: POSTGRES_DB
+          value: pgdb
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: pg-config
+          mountPath: /etc/postgresql
+        - name: pg-data
+          mountPath: /var/lib/postgresql/data
+        - name: pg-secrets
+          mountPath: /etc/pgdb-secrets
+          readOnly: true
+      volumes:
+      - name: pg-config
+        configMap:
+          name: pg-config
+      - name: pg-data
+        persistentVolumeClaim:
+          claimName: pg-data
+      - name: pg-secrets
+        secret:
+          secretName: pg-secrets

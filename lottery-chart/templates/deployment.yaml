@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "lottery.fullname" . }}
+  labels:
+    app: {{ include "lottery.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "lottery.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "lottery.name" . }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          env:
+            - name: DB_HOST
+              value: {{ include "lottery.databaseHostname" . }}
+            - name: DB_PORT
+              value: {{ include "lottery.databasePort" . }}
+            - name: DB_USERNAME
+              value: {{ .Values.database.username }}
+            - name: DB_PASSWORD
+              value: {{ .Values.database.password }}
+            - name: DB_NAME
+              value: {{ .Values.database.database }}
+          volumeMounts:
+            - name: app-volume
+              mountPath: /app
+      volumes:
+        - name: app-volume
+          persistentVolumeClaim:
+            claimName: {{ include "lottery.persistence.claimName" . }}
+{{- define "lottery.name" -}}
+{{- printf "%s-lottery" .Release.Name -}}
+{{- end -}}
+{{- define "lottery.databaseHostname" -}}
+{{- printf "%s-database" .Release.Name -}}
+{{- end -}}
+{{- define "lottery.databasePort" -}}
+{{- .Values.database.port -}}
+{{- end -}}
+
+

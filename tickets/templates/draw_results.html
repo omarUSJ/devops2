@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Draw Results</title>
+</head>
+<body>
+    <h1>Draw Results</h1>
+    <ul>
+        {% for result in results %}
+            <li>{{ result.draw_date }} - {{ result.winning_ticket_number }}</li>
+        {% empty %}
+            <li>No results found.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

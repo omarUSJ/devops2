@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "lottery.databaseName" . }}
+  labels:
+    app: {{ include "lottery.databaseName" . }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "lottery.databaseName" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "lottery.databaseName" . }}
+    spec:
+      containers:
+        - name: {{ include "lottery.databaseName" . }}
+          image: {{ .Values.database.image.repository }}:{{ .Values.database.image.tag }}
+          imagePullPolicy: {{ .Values.database.image.pullPolicy }}
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: {{ .Values.database.password }}
+            - name: MYSQL_DATABASE
+              value: {{ .Values.database.database }}
+          ports:
+            - name: mysql
+              containerPort: 3306
+          volumeMounts:
+            - name: db-volume
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: db-volume
+          persistentVolumeClaim:
+            claimName: {{ include "lottery.persistence.claimName" . }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "lottery.databaseName" . }}-service
+spec:
+  selector:
+    app: {{ include "lottery.databaseName" . }}
+  ports:
+    - name: mysql
+      port: 3306
+      targetPort: mysql
